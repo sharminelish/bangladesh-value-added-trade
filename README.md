@@ -22,13 +22,13 @@ How much of the value of Bangladesh's exports is created in Bangladesh, and how 
 - **The Bangladesh–Brazil link runs both ways.** Brazil sells more inputs to Bangladesh's textile sector (US$349m) than it buys in Bangladeshi textiles (US$239m).
 - **Value retention is improving.** In ADB's revised series, textile DVA rose from 71.8% in 2018 to 76.2% in 2024. (The earlier 2000–2017 series is not directly comparable.)
 
-![Domestic vs foreign value by sector](figures/01_sector_dva_stacked.png)
+![Domestic vs foreign value by sector](01_sector_dva_stacked.png)
 
-![Who earns each US$1 of textile output](figures/05_textile_dollar_origin.png)
+![Who earns each US$1 of textile output](05_textile_dollar_origin.png)
 
-![Bangladesh to Brazil waterfall](figures/07_brazil_waterfall.png)
+![Bangladesh to Brazil waterfall](07_brazil_waterfall.png)
 
-![Trend 2000-2024](figures/08_trend_two_panel.png)
+![Trend 2000-2024](08_trend_two_panel.png)
 
 ## Data
 
@@ -49,24 +49,20 @@ The ADB Excel files are not included in this repository. Download them from the 
 4. **Adjusted export orientation** (UNCTAD–WTO *Practical Guide to Trade Policy Analysis*, eq. 1.3): α = exports / output; α̃ = (exports − VS × exports) / output.
 5. **Value-added trade with Brazil:** v_BAN · L · y_BRA, where L is the global Leontief inverse (Johnson and Noguera, 2012).
 
-## Repository structure
+## Repository files
 
-```
-bangladesh-value-added-trade/
-├── R/
-│   ├── adb_mrio_bangladesh.R          # 2024 analysis (main results)
-│   ├── ban_iot_trend_2000_2024.R      # trend from the national tables, 2000–2024
-│   ├── report_tables.R                # publication-quality tables ({gt}) from the CSVs
-│   └── report_charts_v3.R             # all eight report charts in one consistent style (ggplot2)
-├── output/
-│   ├── ban_sector_import_content_dva.csv   # DVA, import content, alpha and alpha-tilde by sector
-│   ├── ban_direct_input_sources.csv        # imported inputs by supplier country (c4, c5)
-│   ├── ban_value_added_origin.csv          # value-added origin of US$1 of output (c4, c5)
-│   ├── ban_to_bra_gross_vs_va.csv          # Bangladesh–Brazil gross vs value-added exports
-│   └── ban_dva_trend_2000_2024.csv         # DVA, alpha and alpha-tilde by year
-├── figures/                          # the eight report charts (01–08)
-└── README.md
-```
+| File | What it is |
+| --- | --- |
+| `adb_mrio_bangladesh.R` | Main input–output analysis (ADB MRIO 2024) |
+| `ban_iot_trend_2000_2024.R` | Trend from Bangladesh's national input–output tables, 2000–2024 |
+| `report_tables.R` | Publication-quality tables ({gt}) |
+| `report_charts_v3.R` | The eight report charts (ggplot2) |
+| `ban_sector_import_content_dva.csv` | DVA, import content, α and α̃ by sector |
+| `ban_direct_input_sources.csv` | Imported inputs by supplier country (textiles, leather) |
+| `ban_value_added_origin.csv` | Value-added origin of US$1 of output |
+| `ban_to_bra_gross_vs_va.csv` | Bangladesh–Brazil gross vs value-added exports |
+| `ban_dva_trend_2000_2024.csv` | DVA, α and α̃ by year |
+| `01_…png` to `08_…png` | The eight charts |
 
 ## How to run
 
@@ -78,10 +74,10 @@ bangladesh-value-added-trade/
 3. Edit the `root` path at the top of each script to point to your folder.
 4. Run:
    ```r
-   source("R/adb_mrio_bangladesh.R")        # 2024 results
-   source("R/ban_iot_trend_2000_2024.R")    # trend (Bangladesh national IOT workbook)
-   source("R/report_tables.R")              # formatted tables (needs the gt package)
-   source("R/report_charts_v3.R")           # all eight charts (ggplot2)
+   source("adb_mrio_bangladesh.R")        # 2024 results
+   source("ban_iot_trend_2000_2024.R")    # trend (Bangladesh national IOT workbook)
+   source("report_tables.R")              # formatted tables (needs the gt package)
+   source("report_charts_v3.R")           # all eight charts (ggplot2)
    ```
 The first run reads the Excel file and caches it as `.rds`. Later runs take seconds, apart from the global Leontief inverse (2,205 × 2,205).
 
