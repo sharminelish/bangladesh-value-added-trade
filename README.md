@@ -1,62 +1,100 @@
-# Rules of Origin, Value Added and Bangladesh's Apparel Exports after LDC Graduation
+# Who Adds the Value? Import Content of Bangladesh's Exports and the Brazil Link
 
-Bangladesh is due to graduate from Least Developed Country (LDC) status in November 2029. After graduation, its garment exports to the EU face stricter rules of origin. This project asks how much of the value in Bangladeshi textiles and apparel would still count as "originating" under those rules.
+An input–output analysis of Bangladesh's exports using the Asian Development Bank (ADB) Multiregional Input–Output (MRIO) tables. All code is written in R.
 
-**Module 1** (this repository) traces where the value in Bangladeshi textiles comes from, using the ADB multi-regional input–output (MRIO) tables for 2018–2024. It groups foreign suppliers by whether Bangladesh could *cumulate* their inputs under EU rules.
+**Author:** Elish Sharmin ([sharminelish.github.io](https://sharminelish.github.io))
+**Status:** 2024 analysis and 2000–2024 trend complete
 
-## Key findings (2024, textiles, ADB sector c4)
+> The views expressed here are the author's own and do not represent the Government of Bangladesh. All data are publicly available.
 
-- About **76 cents** of every US$1 of textile output is domestic value added. About **24 cents** is foreign.
-- Only about **19%** of that foreign content comes from cumulable partners (SAARC, the EU, and Norway/Switzerland/Türkiye).
-- **China adds 11.9 cents** per US$1, more than the next nine foreign sources combined, and is outside every cumulation group.
-- **Foreign final demand drives 47%** of textile output, 13 points more than the 34% exported directly. The difference is domestic yarn and fabric used in exported garments.
+---
 
-![Cumulation by group](m1_foreign_content_by_group.png)
-![Top foreign sources](m1_top_foreign_sources.png)
-![Exports vs foreign-driven output](m1_export_vs_foreign_driven.png)
+## Question
+
+How much of the value of Bangladesh's exports is created in Bangladesh, and how much comes from imported inputs? Where do those inputs come from? How does Bangladesh's trade with Brazil look when it is measured in value added instead of gross flows?
+
+## Key results (ADB MRIO 2024)
+
+- **About 80% of Bangladesh's exports is domestic value added.** Gross exports are US$45.6 billion, of which domestic value added is 79.9%.
+- **Textiles (sector c4) make up 75% of exports.** Their domestic value added share is 76.2%, so US$25.9 billion of their US$34.0 billion in exports is Bangladeshi value.
+- **Export orientation is lower once imported inputs are removed.** Textiles export 34.2% of their output; adjusted for imported content, the figure is 26.1%.
+- **China supplies 57% of the textile sector's imported inputs**, India 13% and Brazil 2.2% (US$349 million).
+- **The Bangladesh–Brazil link runs both ways.** Brazil sells more inputs to Bangladesh's textile sector (US$349m) than it buys in Bangladeshi textiles (US$239m).
+- **Value retention is improving.** In ADB's revised series, textile DVA rose from 71.8% in 2018 to 76.2% in 2024. (The earlier 2000–2017 series is not directly comparable.)
+
+![Domestic vs foreign value by sector](01_sector_dva_stacked.png)
+
+![Who earns each US$1 of textile output](05_textile_dollar_origin.png)
+
+![Bangladesh to Brazil waterfall](07_brazil_waterfall.png)
+
+![Trend 2000-2024](08_trend_two_panel.png)
+
+## Data
+
+| Source | Description |
+| --- | --- |
+| [ADB MRIO tables](https://kidb.adb.org/globalization/current) | 62 economies + Rest of World, 35 sectors, current prices, US$ million. 2024 table for the main analysis. |
+| ADB input–output tables for Bangladesh | National tables for 2000 and 2007–2024 (one sheet per year), used for the trend. Series revised from 2018. |
+
+The ADB Excel files are not included in this repository. Download them from the ADB Key Indicators Database (link above).
 
 ## Method
 
-| Step | Formula |
-|---|---|
-| Input coefficients | A = Z · diag(x)⁻¹ |
-| Value-added coefficients | v = 1 − colSums(A) |
-| Leontief inverse (global, 2205 × 2205) | L = (I − A)⁻¹ |
-| Value-added origin of sector j | v · L[, j], summed by country and cumulation group |
-| Output driven by final buyer g | x_j = Σ_k L[j, k] · Y[k, g] |
+1. **Input coefficients:** A = Z · diag(x)⁻¹, where Z is the inter-industry matrix and x is gross output.
+2. **Value-added coefficients:** v = 1 − column sums of A.
+3. **Domestic value added and import content** of Bangladesh's output, using the domestic Leontief inverse:
+   - DVA = v_D (I − A_DD)⁻¹
+   - VS = 1′ A_MD (I − A_DD)⁻¹ (Hummels, Ishii and Yi, 2001), with DVA + VS = 1
+4. **Adjusted export orientation** (UNCTAD–WTO *Practical Guide to Trade Policy Analysis*, eq. 1.3): α = exports / output; α̃ = (exports − VS × exports) / output.
+5. **Value-added trade with Brazil:** v_BAN · L · y_BRA, where L is the global Leontief inverse (Johnson and Noguera, 2012).
 
-2205 = 63 economies × 35 sectors. **2020 is excluded from trend comparisons**, because the ADB table shows a one-year jump in EU content that reverses in 2021 (a likely data artefact).
+## Repository files
 
-## Files
-
-| File | What it does |
-|---|---|
-| `01_mrio_va_origin.R` | Reads the ADB MRIO tables, builds the Leontief inverse, writes all `m1_*.csv` results |
-| `00_chart_setup.R` | Shared chart style, colours and save function |
-| `01_chart_foreign_content_by_group.R` | Chart: foreign content by cumulation group, 2018–2024 |
-| `02_chart_export_vs_foreign_driven.R` | Chart: direct exports vs output driven by foreign demand |
-| `03_chart_top_foreign_sources.R` | Chart: top 10 foreign sources of value added |
-| `m1_*.csv` | Results tables |
-| `*.png` | Charts |
+| File | What it is |
+| --- | --- |
+| `bangladesh_value_added_ALL.R` | **Everything in one script:** 2024 model, 2000–2024 trend and all eight charts |
+| `adb_mrio_bangladesh.R` | Main input–output analysis (ADB MRIO 2024), on its own |
+| `ban_iot_trend_2000_2024.R` | Trend from Bangladesh's national input–output tables, 2000–2024, on its own |
+| `va_00_chart_setup.R` | Shared chart style, colours and save function |
+| `va_01_…R` to `va_08_…R` | One script per chart (each sources `va_00_chart_setup.R`) |
+| `report_tables.R` | Publication-quality tables ({gt}) |
+| `ban_sector_import_content_dva.csv` | DVA, import content, α and α̃ by sector |
+| `ban_direct_input_sources.csv` | Imported inputs by supplier country (textiles, leather) |
+| `ban_value_added_origin.csv` | Value-added origin of US$1 of output |
+| `ban_to_bra_gross_vs_va.csv` | Bangladesh–Brazil gross vs value-added exports |
+| `ban_dva_trend_2000_2024.csv` | DVA, α and α̃ by year |
+| `01_…png` to `08_…png` | The eight charts |
 
 ## How to run
 
-1. Download the ADB MRIO 62-economy tables (2018–2024) from the [ADB MRIO database](https://kidb.adb.org/globalization).
-2. In `01_mrio_va_origin.R`, set `root` to your project folder and run it. The results go to `output/tables`.
-3. Check `cumulation_groups.csv`, which the script writes on its first run, against the current EU GSP rules.
-4. Run the chart scripts (`00_chart_setup.R` must be in the same folder as them, and its paths must match yours).
+1. Install R (4.2 or later) and the packages:
+   ```r
+   install.packages(c("readxl", "data.table", "ggplot2", "gt"))
+   ```
+2. Download the ADB Excel files from the ADB Key Indicators Database.
+3. Open `bangladesh_value_added_ALL.R` and edit the **Settings** block at the top (file paths). Switch parts on or off with `run_model`, `run_trend` and `run_charts`.
+4. Run:
+   ```r
+   source("bangladesh_value_added_ALL.R")
+   ```
+   Or run the separate scripts in this order: `adb_mrio_bangladesh.R`, `ban_iot_trend_2000_2024.R`, then any `va_0x_…R` chart script.
 
-Packages: `data.table`, `readxl`, `ggplot2`.
+The first run reads the Excel file and caches it as `.rds`. Later runs take seconds, apart from the global Leontief inverse (2,205 × 2,205).
 
-## Next steps
+## Limitations
 
-- **Module 2:** product-level data (CEPII BACI, HS6) to compare knit (Ch. 61) and woven (Ch. 62) garments against the rules of origin.
-- **Module 3:** structural gravity model (PPML, `fixest`) to estimate the trade effects of the post-graduation scenarios.
+- ADB revised its tables from 2018, so the 2017–2018 drop is a data break, not a real change.
+- Sector c4 combines spinning, weaving and garments, so results apply to the textile sector, not ready-made garments alone.
+- Bangladesh's data in the MRIO tables are partly estimated by ADB.
+- Argentina, Uruguay and Paraguay are part of "Rest of World" in the 63-economy table, so the MERCOSUR analysis covers Brazil only.
+- Value-added coefficients include net taxes on products.
 
-## Data and disclaimer
+## References
 
-Data: Asian Development Bank, Multi-Regional Input–Output Tables. Calculations are the author's own.
-
-*Views are the author's own and do not represent the Government of Bangladesh.*
-
-**Author:** Elish Sharmin
+- Asian Development Bank. Multiregional Input–Output Tables. Key Indicators Database.
+- Hummels, D., Ishii, J. and Yi, K.-M. (2001). The nature and growth of vertical specialization in world trade. *Journal of International Economics*, 54(1), 75–96.
+- Johnson, R. C. and Noguera, G. (2012). Accounting for intermediates: Production sharing and trade in value added. *Journal of International Economics*, 86(2), 224–236.
+- Koopman, R., Wang, Z. and Wei, S.-J. (2014). Tracing value-added and double counting in gross exports. *American Economic Review*, 104(2), 459–494.
+- Miller, R. E. and Blair, P. D. (2009). *Input–Output Analysis: Foundations and Extensions*. Cambridge University Press.
+- UNCTAD and WTO (2012). *A Practical Guide to Trade Policy Analysis*. Geneva.
